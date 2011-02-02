@@ -14,7 +14,7 @@ class Blaml
     # Returns the passed instance.
 
     def add_meta obj
-      obj.meta = @meta_binding.splice_metadata_for obj.value
+      obj.meta = @meta_binding.shift_metadata_for obj.value
       obj
     end
 

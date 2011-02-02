@@ -30,32 +30,32 @@ class Blaml
 
     ##
     # Retrieves the metadata for a given string that matches
-    # a line in the IO stream and deletes it permanently.
+    # the next line in the IO stream and deletes it permanently.
 
-    def splice_metadata_for str
-      selected     = nil
-      last_matched = false
+    def shift_metadata_for str
+      meta, line = @metadata.first
 
-      @metadata.each_with_index do |(meta, matcher_str), i|
-        last_matched = false and next unless str =~ %r{#{matcher_str}}
-
-        break if selected && !last_matched
-
-        selected = meta if !selected ||
-          selected && meta[:updated_at] > selected[:updated_at]
-
-        last_matched = true
-
-        @metadata.delete_at i
-        i = i - 1
+      if line.nil? || line.empty?
+        @metadata.shift
+        return meta if str.empty?
       end
 
-      selected
+      meta, line = @metadata.first
+
+      if str.length > line.length
+        begin
+          meta, line = @metadata.shift
+        end while str.include? @metadata.first[1]
+      else
+        @metadata.first[1] = line.split(str, 2).last.strip
+      end
+
+      meta
     end
 
 
     def sanitize_data str
-      str.strip.gsub(%r{^(-\s)+}, "")
+      str.to_s.strip.gsub(%r{^(-\s)+}, "")
     end
 
 
@@ -101,27 +101,23 @@ class Blaml
       meta_line = ""
 
       until buffer.length == length || @io.eof?
-        read_meta && @meta_mode = false if @meta_mode
+        if @meta_mode
+          read_meta
+          @meta_mode = false
+        end
 
         char = @io.getc
         buffer    << char
         meta_line << char
 
-        if meta_line =~ %r{\w:[\s#{$/}]$}
-          str = sanitize_data meta_line.split(%r{:(\s|#{$/})$}, 2).first
-          @metadata.last << str
-          @metadata << [@metadata.last[0]]
+        if buffer[-1..-1] == $/
+          @meta_mode = true
+          @metadata.last << sanitize_data(meta_line)
           meta_line = ""
-
-        elsif meta_line =~ %r{#{$/}$}
-          @metadata.last << sanitize_data(meta_line.split($/).last)
-          meta_line = ""
-
         end
-
-        @meta_mode = true if buffer[-1..-1] == $/
       end
 
+      #puts @metadata.map{|i| i.inspect}.join("\n")
       buffer
     end
 
@@ -153,7 +149,7 @@ class Blaml
 
         # Got to the end of line with no metadata.
         # Assume we're reading a regular yml IO.
-        if buffer[-1..-1] == $/
+        if @io.eof? || buffer =~ %r{#{$/}$}
           @io.pos = start_pos
           @metadata << [nil]
           return

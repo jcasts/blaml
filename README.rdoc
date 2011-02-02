@@ -42,6 +42,7 @@ returned ruby object through a 'meta' attribute.
 
   b.to_value
   # => Returns the full original data structure (not wrapped in meta classes)
+  # => {:key => "value"}
 
 == INSTALL:
 

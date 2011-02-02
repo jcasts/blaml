@@ -50,7 +50,7 @@ class Blaml
         next unless val.respond_to? :meta
 
         meta = val.meta if !meta ||
-          meta && val.meta[:updated_at] > meta[:updated_at]
+          meta && val.meta && val.meta[:updated_at] > meta[:updated_at]
       end
 
       meta
@@ -103,12 +103,12 @@ class Blaml
       @value.each do |key, val|
         if val.respond_to? :meta
           meta = val.meta if !meta ||
-            meta && val.meta[:updated_at] > meta[:updated_at]
+            meta && val.meta && val.meta[:updated_at] > meta[:updated_at]
         end
 
         if key.respond_to? :meta
           meta = key.meta if !meta ||
-            meta && key.meta[:updated_at] > meta[:updated_at]
+            meta && val.meta && key.meta[:updated_at] > meta[:updated_at]
         end
       end
 
