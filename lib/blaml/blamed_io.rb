@@ -43,16 +43,28 @@ class Blaml
       meta, line = @metadata.first
 
       if str.length > line.length
-        begin
-          meta, line = @metadata.shift
-        end while str.include? @metadata.first[1]
+
+        while str.include? @metadata.first[1] do
+          tmp_meta, line = @metadata.shift
+          meta = tmp_meta if
+            !meta    || !meta[:updated_at]    ||
+            meta     && meta[:updated_at]     &&
+            tmp_meta && tmp_meta[:updated_at] &&
+            tmp_meta[:updated_at] > meta[:updated_at]
+        end
+
       else
         @metadata.first[1] = line.split(str, 2).last.strip
+        @metadata.first[1].gsub!(%r{^(:\s+)+}, "")
       end
 
+      #puts "#{str}  ->  #{meta.inspect}"
       meta
     end
 
+
+    ##
+    # Removes leading spaces and dashes from a line of yaml data.
 
     def sanitize_data str
       str.to_s.strip.gsub(%r{^(-\s)+}, "")

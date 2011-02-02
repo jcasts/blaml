@@ -19,6 +19,9 @@ class Blaml
     end
 
 
+    ##
+    # Calls parent and applies metadata to return value.
+
     def scalar value, anchor, tag, plain, quoted, style
       super
       add_meta @last.children.last
