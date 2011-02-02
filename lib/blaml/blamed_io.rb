@@ -35,7 +35,7 @@ class Blaml
     def shift_metadata_for str
       meta, line = @metadata.first
 
-      if line.nil? || line.empty?
+      if line.nil? || line.empty? || line[0..0] == '#'
         @metadata.shift
         return meta if str.empty?
       end
@@ -55,10 +55,10 @@ class Blaml
 
       else
         @metadata.first[1] = line.split(str, 2).last.strip
-        @metadata.first[1].gsub!(%r{^(:\s+)+}, "")
+        @metadata.first[1].gsub!(%r{^:(\s+|$)}, "")
       end
 
-      #puts "#{str}  ->  #{meta.inspect}"
+      puts "#{str}  ->  #{meta.inspect}"
       meta
     end
 
