@@ -58,7 +58,7 @@ class Blaml
         @metadata.first[1].gsub!(%r{^:(\s+|$)}, "")
       end
 
-      puts "#{str}  ->  #{meta.inspect}"
+      #puts "#{str}  ->  #{meta.inspect}"
       meta
     end
 
