@@ -1,5 +1,6 @@
 # -*- ruby -*-
 
+require 'psych'
 require 'rubygems'
 require 'hoe'
 
