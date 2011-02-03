@@ -90,15 +90,4 @@ class Blaml
     parser.parse blaml
     parser.handler.root
   end
-
-
-  class Node
-
-    attr_accessor :value, :meta
-
-    def initialize value, meta
-      @value = value
-      @meta  = meta
-    end
-  end
 end

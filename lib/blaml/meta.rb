@@ -1,15 +1,29 @@
 class Blaml
 
+
+  ##
+  # Simple wrapper class to assign metadata to object instances.
+
   class MetaNode
 
+
+    # The object to assign metadata to.
     attr_reader :value
+
+    # The metadata assigned to the wrapped object.
     attr_writer :meta
+
+    ##
+    # Create a new MetaNode with the value to wrap and optional metadata.
 
     def initialize value, meta=nil
       @value = value
       @meta  = meta
     end
 
+
+    ##
+    # Checks for equality against the value attribute.
 
     def == obj
       case obj
@@ -19,6 +33,10 @@ class Blaml
       end
     end
 
+
+    ##
+    # Accessor for the meta attribute.
+    # Overridden in MetaArray and MetaHash classes.
 
     def meta
       @meta
@@ -30,10 +48,17 @@ class Blaml
     end
 
 
+    ##
+    # Sends non-defined methods to the value attribute
+
     def method_missing name, *args, &block
       @value.send name, *args, &block
     end
 
+
+    ##
+    # Accessor for the value attribute.
+    # Overridden in MetaArray and MetaHash classes.
 
     def to_value
       @value
@@ -41,7 +66,13 @@ class Blaml
   end
 
 
+  ##
+  # Wraps Array instances with metadata.
+
   class MetaArray < MetaNode
+
+    ##
+    # Returns the child metadata with the most recent change.
 
     def meta
       meta = nil
@@ -57,22 +88,39 @@ class Blaml
     end
 
 
+    ##
+    # Strips MetaNode wrapper from the value and calls to_value
+    # on all array elements.
+
     def to_value
       @value.map{|v| v.respond_to?(:to_value) ? v.to_value : v }
     end
   end
 
 
+  ##
+  # Wraps Hash instances with metadata.
+
   class MetaHash < MetaNode
+
+    ##
+    # Access a value of the wrapped hash.
+
     def [] key
       @value.each{|k,v| return v if k == key}
     end
 
 
+    ##
+    # Assign a value of the wrapped hash.
+
     def []= key, val
       @value.each{|k,v| @value[k] = val and return if k == key}
     end
 
+
+    ##
+    # Merge with and modify the wrapped hash.
 
     def merge! hash
       hash.each do |k,v|
@@ -85,6 +133,9 @@ class Blaml
     end
 
 
+    ##
+    # Create a new MetaHash merged with the given hash or metahash.
+
     def merge hash
       clone = @value.dup
       hash.each do |k,v|
@@ -96,6 +147,9 @@ class Blaml
       clone
     end
 
+
+    ##
+    # Returns the child metadata with the most recent change.
 
     def meta
       meta = nil
@@ -115,6 +169,10 @@ class Blaml
       meta
     end
 
+
+    ##
+    # Strips MetaNode wrapper from the value and calls to_value
+    # on all hash elements.
 
     def to_value
       clone = Hash.new

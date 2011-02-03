@@ -28,6 +28,11 @@ class Blaml
     end
 
 
+    %w{close closed? eof eof? rewind}.each do |meth|
+      class_eval "def #{meth}; @io.#{meth}; end"
+    end
+
+
     ##
     # Retrieves the metadata for a given string that matches
     # the next line in the IO stream and deletes it permanently.
@@ -69,32 +74,6 @@ class Blaml
     def sanitize_data str
       str.to_s.strip.gsub(%r{^(-\s)+}, "")
     end
-
-
-    ##
-    # Close the IO instance.
-
-    def close
-      @io.close
-    end
-
-
-    ##
-    # Check if IO instance is closed.
-
-    def closed?
-      @io.closed?
-    end
-
-
-    ##
-    # Returns true if IO instance is at the end of file.
-
-    def eof?
-      @io.eof?
-    end
-
-    alias eof eof?
 
 
     ##
@@ -181,14 +160,6 @@ class Blaml
       @metadata << [meta_key]
 
       true
-    end
-
-
-    ##
-    # Rewind the IO instance.
-
-    def rewind
-      @io.rewind
     end
   end
 end

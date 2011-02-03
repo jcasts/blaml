@@ -6,23 +6,17 @@ class Blaml
   class ToRuby < Psych::Visitors::ToRuby
 
     ##
-    # Assign the given meta data to the object and return the
-    # given object.
-
-    def add_meta obj, meta
-      case obj
-      when Array then MetaArray.new obj, meta
-      when Hash  then MetaHash.new obj, meta
-      else
-        MetaNode.new obj, meta
-      end
-    end
-
+    # Wraps ruby object with MetaNode.
+    # See Psych::Visitors::ToRuby
 
     def visit_Psych_Nodes_Scalar o
       MetaNode.new super, o.meta
     end
 
+
+    ##
+    # Wraps ruby Arrays with MetaArray.
+    # See Psych::Visitors::ToRuby
 
     def visit_Psych_Nodes_Sequence o
       seq  = super
@@ -31,6 +25,11 @@ class Blaml
       MetaArray.new seq
     end
 
+
+
+    ##
+    # Wraps ruby Arrays with MetaHash.
+    # See Psych::Visitors::ToRuby
 
     def visit_Psych_Nodes_Mapping o
       mapp = super
@@ -43,7 +42,12 @@ end
 
 
 class Psych::Nodes::Node
+
+  # Metadata accessor.
   attr_accessor :meta
+
+  ##
+  # Tells Psych nodes to use Blaml::ToRuby.
 
   def to_blamed_ruby
     Blaml::ToRuby.new.accept self
