@@ -3,7 +3,6 @@ History.rdoc
 Manifest.txt
 README.rdoc
 Rakefile
-bin/blaml
 lib/blaml.rb
 lib/blaml/blamed_io.rb
 lib/blaml/meta.rb
