@@ -10,7 +10,7 @@ require 'blaml/to_ruby'
 class Blaml
 
   # This gem's version.
-  VERSION = "1.0.0"
+  VERSION = "1.0.0.pre"
 
   ###
   # Load +yaml+ in to a Ruby data structure.  If multiple documents are
