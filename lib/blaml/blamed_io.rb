@@ -6,25 +6,21 @@ class Blaml
 
   class BlamedIO
 
-    DATE_MATCHER =
-      %r{(\d+[-\s:]){6}[^\s]+}
-
-    META_MATCHER =
-      %r{([^\s]+)\s+([^\s]+)\s+\(([^\s]+)\s+(#{DATE_MATCHER})\s+(\d+)\)\s}
-
     # Accessor for currently available metadata.
     attr_reader :metadata
 
-
     ##
     # Create new BlamedIO with a string or IO object.
+    # Pass an optional blamer object for blame data parsing
+    # (defaults to GitBlamer).
 
-    def initialize io
+    def initialize io, blamer=nil
       io = StringIO.new io if String === io
 
       @io        = io
       @metadata  = []
       @meta_mode = true
+      @blamer    = blamer || GitBlamer
     end
 
 
@@ -132,11 +128,11 @@ class Blaml
     # Reads blame metadata.
 
     def read_meta
-      buffer = ""
-
+      buffer    = ""
+      meta      = nil
       start_pos = @io.pos
 
-      until buffer =~ META_MATCHER do
+      until meta = @blamer.parse(buffer) do
 
         # Got to the end of line with no metadata.
         # Assume we're reading a regular yml IO.
@@ -149,15 +145,7 @@ class Blaml
         buffer << @io.getc
       end
 
-      meta_key = {
-        :file       => $2,
-        :line       => $6.to_i,
-        :author     => $3,
-        :commit     => $1,
-        :updated_at => Time.parse($4)
-      }
-
-      @metadata << [meta_key]
+      @metadata << [meta]
 
       true
     end

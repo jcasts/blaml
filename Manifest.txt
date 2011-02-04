@@ -5,6 +5,7 @@ README.rdoc
 Rakefile
 lib/blaml.rb
 lib/blaml/blamed_io.rb
+lib/blaml/git_blamer.rb
 lib/blaml/meta.rb
 lib/blaml/to_ruby.rb
 lib/blaml/tree_builder.rb

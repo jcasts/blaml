@@ -2,6 +2,7 @@ require 'time'
 require 'psych'
 require 'yaml'
 
+require 'blaml/git_blamer'
 require 'blaml/blamed_io'
 require 'blaml/tree_builder'
 require 'blaml/meta'
@@ -16,13 +17,12 @@ class Blaml
   # Load +yaml+ in to a Ruby data structure.  If multiple documents are
   # provided, the object contained in the first document will be returned.
   #
-  # Example:
-  #
-  #   Psych.load("--- a")           # => 'a'
-  #   Psych.load("---\n - a\n - b") # => ['a', 'b']
+  # Pass an optional blamer object for blame data parsing
+  # (defaults to GitBlamer).
 
-  def self.load yaml
-    result = parse(yaml)
+
+  def self.load yaml, blamer=nil
+    result = parse(yaml, blamer)
     result ? result.to_blamed_ruby : result
   end
 
@@ -49,28 +49,26 @@ class Blaml
 
   ##
   # Blame the given file and load the output.
+  # Pass an optional blamer object for blame data parsing
+  # (defaults to GitBlamer).
 
-  def self.blame_file filename
-    filepath, filename = File.split filename
-
-    blame = `cd #{filepath} && git blame -f #{filename}`
-    raise blame unless $?.success?
-
-    self.load blame
+  def self.blame_file filename, blamer=nil
+    blamer ||= GitBlamer
+    self.load blamer.blame(filename), blamer
   end
 
 
   ###
-  # Parse a YAML string in +yaml+.  Returns the first object of a YAML AST.
+  # Parse a blamed YAML string in +yaml+.
+  # Returns the first object of a YAML AST.
   #
-  # Example:
-  #
-  #   Psych.parse("---\n - a\n - b") # => #<Psych::Nodes::Sequence:0x00>
-  #
-  # See Psych::Nodes for more information about YAML AST.
+  # Pass an optional blamer object for blame data parsing
+  # (defaults to GitBlamer).
 
-  def self.parse yaml
-    children = parse_stream(BlamedIO.new(yaml)).children
+  def self.parse yaml, blamer=nil
+    io = BlamedIO.new yaml, blamer
+
+    children = parse_stream(io).children
     children.empty? ? false : children.first.children.first
   end
 
