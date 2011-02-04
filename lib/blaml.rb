@@ -47,6 +47,19 @@ class Blaml
   end
 
 
+  ##
+  # Blame the given file and load the output.
+
+  def self.blame_file filename
+    filepath, filename = File.split filename
+
+    blame = `cd #{filepath} && git blame -f #{filename}`
+    raise blame unless $?.success?
+
+    self.load blame
+  end
+
+
   ###
   # Parse a YAML string in +yaml+.  Returns the first object of a YAML AST.
   #
