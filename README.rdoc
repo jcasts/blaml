@@ -5,7 +5,7 @@
 == DESCRIPTION:
 
 Blaml is a parser based on Psych (ruby 1.9 only) for yaml files that have
-been blamed with git.
+been blamed with a SCM.
 Blaml parses the blamed yaml file and makes the blame metadata available on the
 returned ruby object through a 'meta' attribute.
 
@@ -13,11 +13,23 @@ returned ruby object through a 'meta' attribute.
 
 * Load blamed yaml files and access blame data as metadata.
 
-* Currently only works on blamed files generated with 'git blame -f file.yml'
+* Supports custom SCM blaming and parsing (see Blaml::GitBlamer).
 
 == SYNOPSIS:
 
+Using the built in GitBlamer:
+
   b = Blaml.load `git blame -f file.yml`
+
+  b = Blaml.blame_file "file.yml"
+
+Using a custom SCM blamer class:
+
+  b = Blaml.blame "file.yml", SvnBlamer
+  # Note: Define SvnBlamer with the same interface as GitBlamer
+
+
+Working with the blamed data:
 
   b.meta
   # => Returns metadata hash for most recent change in this data structure.

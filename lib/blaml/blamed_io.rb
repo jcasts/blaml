@@ -12,7 +12,7 @@ class Blaml
     ##
     # Create new BlamedIO with a string or IO object.
     # Pass an optional blamer object for blame data parsing
-    # (defaults to GitBlamer).
+    # (defaults to Blaml.default_blamer).
 
     def initialize io, blamer=nil
       io = StringIO.new io if String === io
@@ -20,7 +20,7 @@ class Blaml
       @io        = io
       @metadata  = []
       @meta_mode = true
-      @blamer    = blamer || GitBlamer
+      @blamer    = blamer || Blaml.default_blamer
     end
 
 
