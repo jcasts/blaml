@@ -35,16 +35,6 @@ class Blaml
 
 
     ##
-    # Checks if this meta node has been updated more recently than
-    # the given node or time instance.
-
-    def newer_than? time
-      return false unless self.meta && self.meta[:updated_at]
-      self.meta[:updated_at] > time
-    end
-
-
-    ##
     # Accessor for the meta attribute.
     # Overridden in MetaArray and MetaHash classes.
 
@@ -181,11 +171,9 @@ class Blaml
           if !meta ||
             meta && val.meta && key.meta[:updated_at] > meta[:updated_at]
             meta = key.meta.dup
-            path_key = key
           end
         end
       end
-
 
       (meta[:path] ||= []).unshift path_key if meta && path_key
 
