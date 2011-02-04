@@ -28,7 +28,6 @@ class Blaml
   # Pass an optional blamer object for blame data parsing
   # (defaults to Blaml.default_blamer).
 
-
   def self.load yaml, blamer=nil
     result = parse(yaml, blamer)
     result ? result.to_blamed_ruby : result
@@ -40,7 +39,7 @@ class Blaml
   # as a list.  For example:
   #
   #   Psych.load_stream("--- foo\n...\n--- bar\n...") # => ['foo', 'bar']
-  #
+
   def self.load_stream yaml, blamer=nil
     parse_stream(yaml, blamer).children.map { |child| child.to_blamed_ruby }
   end

@@ -15,7 +15,7 @@ returned ruby object through a 'meta' attribute.
 
 * Supports custom SCM blaming and parsing (see Blaml::GitBlamer).
 
-== SYNOPSIS:
+== USAGE:
 
 Using the built in GitBlamer:
 
@@ -28,11 +28,11 @@ Using a custom SCM blamer class:
   # Note: First define SvnBlamer with the same interface as GitBlamer
 
   # Explicitely use a different blamer:
-  b = Blaml.blame "file.yml", SvnBlamer
+  b = Blaml.blame_file "file.yml", SvnBlamer
  
   # Always use a different blamer:
   Blaml.default_blamer = SvnBlamer
-  b = Blaml.blame "file.yml"
+  b = Blaml.blame_file "file.yml"
 
 Working with the blamed data:
 
