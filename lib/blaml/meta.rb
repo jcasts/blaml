@@ -35,6 +35,16 @@ class Blaml
 
 
     ##
+    # Checks if this meta node has been updated more recently than
+    # the given node or time instance.
+
+    def newer_than? time
+      return false unless self.meta && self.meta[:updated_at]
+      self.meta[:updated_at] > time
+    end
+
+
+    ##
     # Accessor for the meta attribute.
     # Overridden in MetaArray and MetaHash classes.
 
@@ -75,14 +85,17 @@ class Blaml
     # Returns the child metadata with the most recent change.
 
     def meta
-      meta = nil
+      meta     = nil
+      path_key = nil
 
-      @value.each do |val|
+      @value.each_with_index do |val, i|
         next unless val.respond_to? :meta
 
-        meta = val.meta if !meta ||
+        meta = val.meta.dup and path_key = i if !meta ||
           meta && val.meta && val.meta[:updated_at] > meta[:updated_at]
       end
+
+      (meta[:path] ||= []).unshift path_key if meta && path_key
 
       meta
     end
@@ -152,19 +165,29 @@ class Blaml
     # Returns the child metadata with the most recent change.
 
     def meta
-      meta = nil
+      meta     = nil
+      path_key = nil
 
       @value.each do |key, val|
         if val.respond_to? :meta
-          meta = val.meta if !meta ||
+          if !meta ||
             meta && val.meta && val.meta[:updated_at] > meta[:updated_at]
+            meta = val.meta.dup
+            path_key = key
+          end
         end
 
         if key.respond_to? :meta
-          meta = key.meta if !meta ||
+          if !meta ||
             meta && val.meta && key.meta[:updated_at] > meta[:updated_at]
+            meta = key.meta.dup
+            path_key = key
+          end
         end
       end
+
+
+      (meta[:path] ||= []).unshift path_key if meta && path_key
 
       meta
     end
