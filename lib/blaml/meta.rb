@@ -63,6 +63,14 @@ class Blaml
     def to_value
       @value
     end
+
+
+    ##
+    # Output @value yaml string.
+
+    def to_yaml
+      self.to_value.to_yaml
+    end
   end
 
 
