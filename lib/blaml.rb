@@ -41,8 +41,8 @@ class Blaml
   #
   #   Psych.load_stream("--- foo\n...\n--- bar\n...") # => ['foo', 'bar']
   #
-  def self.load_stream yaml
-    parse_stream(yaml).children.map { |child| child.to_blamed_ruby }
+  def self.load_stream yaml, blamer=nil
+    parse_stream(yaml, blamer).children.map { |child| child.to_blamed_ruby }
   end
 
 
@@ -50,8 +50,8 @@ class Blaml
   # Load the blamed document contained in +filename+.
   # Returns the yaml contained in +filename+ as a ruby object
 
-  def self.load_file filename
-    self.load File.open(filename)
+  def self.load_file filename, blamer=nil
+    self.load File.open(filename), blamer
   end
 
 
@@ -84,9 +84,9 @@ class Blaml
   ###
   # Parse a file at +filename+. Returns the YAML AST.
 
-  def self.parse_file filename
+  def self.parse_file filename, blamer=nil
     File.open filename do |f|
-      parse f
+      parse f, blamer
     end
   end
 
@@ -104,9 +104,9 @@ class Blaml
   # Returns the full AST for the YAML document with blame metadata.
   # See Psych::parse_stream for more info.
 
-  def self.parse_stream blaml
+  def self.parse_stream blaml, blamer=nil
     parser = self.parser blaml
-    parser.parse blaml
+    parser.parse blaml, blamer
     parser.handler.root
   end
 end
