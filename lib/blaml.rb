@@ -105,7 +105,7 @@ class Blaml
 
   def self.parse_stream blaml, blamer=nil
     parser = self.parser blaml
-    parser.parse blaml, blamer
+    parser.parse blaml
     parser.handler.root
   end
 end
