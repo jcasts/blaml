@@ -25,9 +25,14 @@ Using the built in GitBlamer:
 
 Using a custom SCM blamer class:
 
-  b = Blaml.blame "file.yml", SvnBlamer
-  # Note: Define SvnBlamer with the same interface as GitBlamer
+  # Note: First define SvnBlamer with the same interface as GitBlamer
 
+  # Explicitely use a different blamer:
+  b = Blaml.blame "file.yml", SvnBlamer
+ 
+  # Always use a different blamer:
+  Blaml.default_blamer = SvnBlamer
+  b = Blaml.blame "file.yml"
 
 Working with the blamed data:
 
