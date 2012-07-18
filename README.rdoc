@@ -1,6 +1,6 @@
 = Blaml
 
-* http://github.com/yaksnrainbows/blaml
+* http://yaks.me/blaml
 
 == DESCRIPTION:
 

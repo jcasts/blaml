@@ -11,7 +11,7 @@ require 'blaml/to_ruby'
 class Blaml
 
   # This gem's version.
-  VERSION = "1.0.0.pre"
+  VERSION = "1.0.0"
 
   class << self
     # The default blamer interface to use.
